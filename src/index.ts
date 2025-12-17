@@ -2,6 +2,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import helmet from "helmet";
+import { messagesRouter } from "./routes/messages.js";
+import { usersRouter } from "./routes/users.js";
 
 dotenv.config();
 
@@ -11,8 +13,10 @@ const app = express();
 
 app.use(helmet());
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => res.json({ data: "Hello!" }));
+app.use("/users", usersRouter);
+app.use("/messages", messagesRouter);
 
 app.listen(PORT, () => {
   if (process.env.NODE_ENV === "development") {
