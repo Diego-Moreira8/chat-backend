@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import * as userService from "../services/users.js";
+import { generateAccessToken } from "../utils/jwt.js";
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
   const { name, username, password } = req.body;
@@ -9,10 +10,15 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 
 async function login(req: Request, res: Response, next: NextFunction) {
   const { username, password } = req.body;
+  const { userData } = res.locals;
+
+  const token = generateAccessToken(userData);
+
   res.json({
     message: "Success",
     user: { username, password },
-    userData: res.locals.userData,
+    userData,
+    token,
   });
 }
 
