@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", usersRouter);
-app.use("/messages", messagesRouter);
+// app.use("/messages", messagesRouter);
 
 app.listen(PORT, () => {
   if (process.env.NODE_ENV === "development") {
