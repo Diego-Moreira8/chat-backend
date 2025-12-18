@@ -22,7 +22,7 @@ const createUserValidator = [
       if (!username) return true; // Avoid unnecessary queries
 
       const inputError = new Error(
-        `Username "${username}" already exists in the database`
+        `Username '${username}' already exists in the database`
       );
 
       try {
