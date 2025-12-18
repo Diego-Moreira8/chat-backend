@@ -1,11 +1,9 @@
+import "dotenv/config";
 import cors from "cors";
-import dotenv from "dotenv";
 import express from "express";
 import helmet from "helmet";
 import { messagesRouter } from "./routes/messages.js";
 import { usersRouter } from "./routes/users.js";
-
-dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
