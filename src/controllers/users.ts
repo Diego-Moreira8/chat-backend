@@ -7,4 +7,13 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
   res.json({ message: "Success", newUser });
 }
 
-export { createUser };
+async function login(req: Request, res: Response, next: NextFunction) {
+  const { username, password } = req.body;
+  res.json({
+    message: "Success",
+    user: { username, password },
+    userData: res.locals.userData,
+  });
+}
+
+export { createUser, login };

@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { isUsernameTaken } from "../../services/users.js";
+import { usernameExists } from "../../services/users.js";
 
 const createUserValidator = [
   body("name")
@@ -26,7 +26,7 @@ const createUserValidator = [
       );
 
       try {
-        const usernameTaken = await isUsernameTaken(username);
+        const usernameTaken = await usernameExists(username);
         if (usernameTaken) throw inputError;
         return true;
       } catch (error) {

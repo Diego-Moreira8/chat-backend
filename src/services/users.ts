@@ -15,7 +15,7 @@ async function createUser(username: string, password: string, name: string) {
   return newUser;
 }
 
-async function isUsernameTaken(username: string) {
+async function usernameExists(username: string) {
   const user = await prisma.user.findFirst({
     where: {
       username: {
@@ -25,7 +25,7 @@ async function isUsernameTaken(username: string) {
     },
   });
 
-  return Boolean(user);
+  return user;
 }
 
-export { createUser, isUsernameTaken };
+export { createUser, usernameExists };
