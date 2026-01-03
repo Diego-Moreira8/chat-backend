@@ -3,7 +3,6 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import logger from "morgan";
-import { authenticate } from "./middlewares/auth/auth.js";
 import { messagesRouter } from "./routes/messages.js";
 import { usersRouter } from "./routes/users.js";
 
@@ -18,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", usersRouter);
-app.use("/messages", authenticate, messagesRouter);
+app.use("/messages", messagesRouter);
 
 app.listen(PORT, () => {
   if (process.env.NODE_ENV === "development") {
