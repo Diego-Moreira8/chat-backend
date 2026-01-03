@@ -6,9 +6,7 @@ import { validateRequest } from "../middlewares/validators/validateRequest.js";
 
 const messagesRouter = Router();
 
-messagesRouter.get("/", authenticate, (req, res, next) => {
-  res.json({ userData: res.locals.user });
-});
+messagesRouter.get("/", authenticate, messagesController.getAllMessages);
 
 messagesRouter.post(
   "/",
