@@ -1,8 +1,14 @@
 import "dotenv/config";
 import type { Request, Response, NextFunction } from "express";
+import type { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
+import { getUserById } from "../../services/users.js";
 
-function authenticate(req: Request, res: Response, next: NextFunction) {
+interface AuthPayload extends JwtPayload {
+  sub: string;
+}
+
+async function authenticate(req: Request, res: Response, next: NextFunction) {
   const { JWT_SECRET } = process.env;
 
   if (!JWT_SECRET) {
@@ -22,11 +28,25 @@ function authenticate(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    res.locals.user = payload;
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (typeof decoded === "string") {
+      return res.status(401).json({ message: "Invalid access token payload" });
+    }
+
+    const payload = decoded as AuthPayload;
+    const userData = await getUserById(parseInt(payload.sub));
+
+    if (!userData) {
+      return res
+        .status(401)
+        .json({ message: "User not found, impossible to authenticate" });
+    }
+
+    res.locals.user = userData;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Invalid or expired token" });
+    return res.status(401).json({ message: "Invalid or expired access token" });
   }
 }
 

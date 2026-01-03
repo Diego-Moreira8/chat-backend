@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prisma:studio": "prisma studio --config prisma.config.ts"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "express-validator": "^7.3.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
     "pg": "^8.16.3"
   },
   "devDependencies": {
@@ -36,6 +37,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^25.0.3",
     "@types/pg": "^8.16.0",
     "prisma": "^7.2.0",

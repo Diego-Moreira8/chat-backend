@@ -2,6 +2,7 @@ import "dotenv/config";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import logger from "morgan";
 import { authenticate } from "./middlewares/auth/auth.js";
 import { messagesRouter } from "./routes/messages.js";
 import { usersRouter } from "./routes/users.js";
@@ -10,8 +11,10 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
+app.use(logger("dev"));
 app.use(helmet());
 app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", usersRouter);

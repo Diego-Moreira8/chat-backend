@@ -15,6 +15,11 @@ async function createUser(username: string, password: string, name: string) {
   return newUser;
 }
 
+async function getUserById(id: number) {
+  const user = await prisma.user.findUnique({ where: { id } });
+  return user;
+}
+
 async function usernameExists(username: string) {
   const user = await prisma.user.findFirst({
     where: {
@@ -28,4 +33,4 @@ async function usernameExists(username: string) {
   return user;
 }
 
-export { createUser, usernameExists };
+export { createUser, getUserById, usernameExists };
