@@ -16,6 +16,9 @@ async function getAllMessages() {
     include: {
       user: true,
     },
+    orderBy: {
+      createdAt: "asc",
+    },
   });
 
   const mappedMsgs = allMessages.map((msg) => {

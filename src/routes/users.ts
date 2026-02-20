@@ -13,14 +13,14 @@ usersRouter.post(
   "/",
   createUserValidator,
   validateRequest,
-  userController.createUser
+  userController.createUser,
 );
 
 usersRouter.post(
   "/login",
   loginValidator,
   validateRequest,
-  userController.login
+  userController.login,
 );
 
 usersRouter.get("/me", authenticate, userController.getCurrentUser);
@@ -31,7 +31,7 @@ usersRouter.get(
   adminOnly,
   userIdValidator,
   validateRequest,
-  userController.getUser
+  userController.getUser,
 );
 
 export { usersRouter };
