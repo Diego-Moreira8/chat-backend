@@ -1,6 +1,6 @@
-import "dotenv/config";
 import type { Request, Response, NextFunction } from "express";
 import type { JwtPayload } from "jsonwebtoken";
+import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { getUserById } from "../../services/users.js";
 
@@ -8,12 +8,22 @@ interface AuthPayload extends JwtPayload {
   sub: string;
 }
 
-async function authenticate(req: Request, res: Response, next: NextFunction) {
+function getJwtSecret() {
   const { JWT_SECRET } = process.env;
 
   if (!JWT_SECRET) {
     throw new Error("JWT_SECRET must be defined on environment variables");
   }
+
+  return JWT_SECRET;
+}
+
+async function validateAccessToken(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const jwtSecret = getJwtSecret();
 
   const authHeader = req.headers.authorization;
 
@@ -28,14 +38,20 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, jwtSecret);
 
     if (typeof decoded === "string") {
       return res.status(401).json({ message: "Invalid access token payload" });
     }
 
     const payload = decoded as AuthPayload;
-    const userData = await getUserById(parseInt(payload.sub));
+    const userId = parseInt(payload.sub);
+
+    if (isNaN(userId)) {
+      return res.status(401).json({ message: "Invalid access token payload" });
+    }
+
+    const userData = await getUserById(userId);
 
     if (!userData) {
       return res
@@ -50,4 +66,49 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export { authenticate };
+async function validateRefreshToken(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const jwtSecret = getJwtSecret();
+    const { refreshToken } = req.cookies;
+
+    if (typeof refreshToken === "undefined") {
+      return res
+        .status(401)
+        .json({ message: "Refresh token cookie not present" });
+    }
+
+    const decoded = jwt.verify(refreshToken, jwtSecret);
+
+    if (typeof decoded === "string") {
+      return res.status(401).json({ message: "Invalid refresh token payload" });
+    }
+
+    const payload = decoded as AuthPayload;
+    const userId = parseInt(payload.sub);
+
+    if (isNaN(userId)) {
+      return res.status(401).json({ message: "Invalid refresh token payload" });
+    }
+
+    const userData = await getUserById(userId);
+
+    if (!userData) {
+      return res.status(401).json({
+        message: "User not found, impossible to refresh the access token",
+      });
+    }
+
+    res.locals.user = userData;
+    next();
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ message: "Invalid or expired refresh token" });
+  }
+}
+
+export { validateAccessToken, validateRefreshToken };

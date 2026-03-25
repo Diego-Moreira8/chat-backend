@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import * as userService from "../services/users.js";
-import { generateAccessToken } from "../utils/jwt.js";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwt.js";
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
   const { name, username, password } = req.body;
@@ -51,12 +51,45 @@ async function getUser(req: Request, res: Response, next: NextFunction) {
 async function login(req: Request, res: Response, next: NextFunction) {
   const { userData } = res.locals;
 
-  const token = generateAccessToken(userData);
+  const accessToken = generateAccessToken(userData);
+  const refreshToken = generateRefreshToken(userData);
 
-  res.json({
+  res
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    })
+    .json({
+      message: "Success",
+      accessToken,
+    });
+}
+
+async function logout(req: Request, res: Response, next: NextFunction) {
+  res.clearCookie("refreshToken").json({
     message: "Success",
-    token,
   });
 }
 
-export { createUser, getCurrentUser, getUser, login };
+async function refreshAccessToken(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const userData = res.locals.user;
+  const accessToken = generateAccessToken(userData);
+
+  res.json({
+    message: "Success",
+    accessToken,
+  });
+}
+
+export {
+  createUser,
+  getCurrentUser,
+  getUser,
+  login,
+  logout,
+  refreshAccessToken,
+};

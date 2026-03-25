@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as userController from "../controllers/users.js";
 import { adminOnly } from "../middlewares/auth/adminOnly.js";
-import { authenticate } from "../middlewares/auth/auth.js";
+import * as auth from "../middlewares/auth/auth.js";
 import { createUserValidator } from "../middlewares/validators/createUserValidator.js";
 import { loginValidator } from "../middlewares/validators/loginValidator.js";
 import { userIdValidator } from "../middlewares/validators/userIdValidator.js";
@@ -23,11 +23,19 @@ usersRouter.post(
   userController.login,
 );
 
-usersRouter.get("/me", authenticate, userController.getCurrentUser);
+usersRouter.get("/logout", userController.logout);
+
+usersRouter.get("/me", auth.validateAccessToken, userController.getCurrentUser);
+
+usersRouter.get(
+  "/refresh",
+  auth.validateRefreshToken,
+  userController.refreshAccessToken,
+);
 
 usersRouter.get(
   "/:id",
-  authenticate,
+  auth.validateAccessToken,
   adminOnly,
   userIdValidator,
   validateRequest,
