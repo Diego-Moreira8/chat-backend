@@ -6,7 +6,6 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
   const { name, username, password } = req.body;
   const newUser = await userService.createUser(username, password, name);
   res.status(201).json({
-    message: "New user created",
     user: {
       id: newUser.id,
       username: newUser.username,
@@ -18,8 +17,8 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 
 function getCurrentUser(req: Request, res: Response, next: NextFunction) {
   const { id, username, name, role } = res.locals.user;
+
   res.json({
-    message: "Success",
     user: {
       id,
       username,
@@ -38,7 +37,6 @@ async function getUser(req: Request, res: Response, next: NextFunction) {
 
   const { id, username, name, role } = user;
   res.json({
-    message: "Success",
     user: {
       id,
       username,
@@ -60,15 +58,12 @@ async function login(req: Request, res: Response, next: NextFunction) {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
     .json({
-      message: "Success",
       accessToken,
     });
 }
 
 async function logout(req: Request, res: Response, next: NextFunction) {
-  res.clearCookie("refreshToken").json({
-    message: "Success",
-  });
+  res.clearCookie("refreshToken").sendStatus(204);
 }
 
 async function refreshAccessToken(
@@ -80,7 +75,6 @@ async function refreshAccessToken(
   const accessToken = generateAccessToken(userData);
 
   res.json({
-    message: "Success",
     accessToken,
   });
 }

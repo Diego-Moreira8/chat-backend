@@ -55,7 +55,7 @@ async function validateAccessToken(
 
     if (!userData) {
       return res
-        .status(401)
+        .status(404)
         .json({ message: "User not found, impossible to authenticate" });
     }
 
@@ -97,7 +97,7 @@ async function validateRefreshToken(
     const userData = await getUserById(userId);
 
     if (!userData) {
-      return res.status(401).json({
+      return res.status(404).json({
         message: "User not found, impossible to refresh the access token",
       });
     }
