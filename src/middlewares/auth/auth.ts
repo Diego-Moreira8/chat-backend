@@ -1,21 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import type { JwtPayload } from "jsonwebtoken";
-import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { getUserById } from "../../services/users.js";
+import { envVar } from "../../utils/env-variables.js";
 
 interface AuthPayload extends JwtPayload {
   sub: string;
-}
-
-function getJwtSecret() {
-  const { JWT_SECRET } = process.env;
-
-  if (!JWT_SECRET) {
-    throw new Error("JWT_SECRET must be defined on environment variables");
-  }
-
-  return JWT_SECRET;
 }
 
 async function validateAccessToken(
@@ -23,8 +13,6 @@ async function validateAccessToken(
   res: Response,
   next: NextFunction,
 ) {
-  const jwtSecret = getJwtSecret();
-
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -38,7 +26,7 @@ async function validateAccessToken(
   }
 
   try {
-    const decoded = jwt.verify(token, jwtSecret);
+    const decoded = jwt.verify(token, envVar.JWT_SECRET);
 
     if (typeof decoded === "string") {
       return res.status(401).json({ message: "Invalid access token payload" });
@@ -72,7 +60,6 @@ async function validateRefreshToken(
   next: NextFunction,
 ) {
   try {
-    const jwtSecret = getJwtSecret();
     const { refreshToken } = req.cookies;
 
     if (typeof refreshToken === "undefined") {
@@ -81,7 +68,7 @@ async function validateRefreshToken(
         .json({ message: "Refresh token cookie not present" });
     }
 
-    const decoded = jwt.verify(refreshToken, jwtSecret);
+    const decoded = jwt.verify(refreshToken, envVar.JWT_SECRET);
 
     if (typeof decoded === "string") {
       return res.status(401).json({ message: "Invalid refresh token payload" });

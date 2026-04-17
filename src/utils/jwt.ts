@@ -1,15 +1,9 @@
-import "dotenv/config";
 import jwt from "jsonwebtoken";
+import { envVar } from "./env-variables.js";
 import type { User } from "../../generated/prisma/client.js";
 
 function generateAccessToken(userData: User) {
-  const { JWT_SECRET } = process.env;
-
-  if (!JWT_SECRET) {
-    throw new Error("JWT_SECRET must be defined on environment variables");
-  }
-
-  const accessToken = jwt.sign({ sub: userData.id }, JWT_SECRET, {
+  const accessToken = jwt.sign({ sub: userData.id }, envVar.JWT_SECRET, {
     expiresIn: "15min",
   });
 
@@ -17,13 +11,7 @@ function generateAccessToken(userData: User) {
 }
 
 function generateRefreshToken(userData: User) {
-  const { JWT_SECRET } = process.env;
-
-  if (!JWT_SECRET) {
-    throw new Error("JWT_SECRET must be defined on environment variables");
-  }
-
-  const refreshToken = jwt.sign({ sub: userData.id }, JWT_SECRET, {
+  const refreshToken = jwt.sign({ sub: userData.id }, envVar.JWT_SECRET, {
     expiresIn: "7d",
   });
 

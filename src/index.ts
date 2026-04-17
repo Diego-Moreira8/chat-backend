@@ -1,4 +1,3 @@
-import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -6,8 +5,7 @@ import helmet from "helmet";
 import logger from "morgan";
 import { messagesRouter } from "./routes/messages.js";
 import { usersRouter } from "./routes/users.js";
-
-const PORT = process.env.PORT || 3000;
+import { envVar } from "./utils/env-variables.js";
 
 const app = express();
 
@@ -26,8 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", usersRouter);
 app.use("/messages", messagesRouter);
 
-app.listen(PORT, () => {
-  if (process.env.NODE_ENV === "development") {
-    console.log(`Listening on http://localhost:${PORT}/`);
+app.listen(envVar.PORT, () => {
+  if (envVar.NODE_ENV === "development") {
+    console.log(`Listening on http://localhost:${envVar.PORT}/`);
   }
 });
