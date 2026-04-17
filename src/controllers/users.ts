@@ -28,6 +28,16 @@ function getCurrentUser(req: Request, res: Response, next: NextFunction) {
   });
 }
 
+async function getSentMessagesCount(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const count = await userService.getSentMessagesCount(res.locals.user.id);
+
+  res.json({ count });
+}
+
 async function getUser(req: Request, res: Response, next: NextFunction) {
   const idParam = req.params.id;
   if (!idParam) return res.status(400).json({ message: "ID not provided" });
@@ -82,6 +92,7 @@ async function refreshAccessToken(
 export {
   createUser,
   getCurrentUser,
+  getSentMessagesCount,
   getUser,
   login,
   logout,

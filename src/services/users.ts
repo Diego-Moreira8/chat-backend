@@ -20,6 +20,11 @@ async function getUserById(id: number) {
   return user;
 }
 
+async function getSentMessagesCount(userId: number) {
+  const count = await prisma.message.count({ where: { userId } });
+  return count;
+}
+
 async function usernameExists(username: string) {
   const user = await prisma.user.findFirst({
     where: {
@@ -33,4 +38,4 @@ async function usernameExists(username: string) {
   return user;
 }
 
-export { createUser, getUserById, usernameExists };
+export { createUser, getSentMessagesCount, getUserById, usernameExists };

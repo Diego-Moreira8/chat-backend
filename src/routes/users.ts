@@ -28,6 +28,12 @@ usersRouter.get("/logout", userController.logout);
 usersRouter.get("/me", auth.validateAccessToken, userController.getCurrentUser);
 
 usersRouter.get(
+  "/messages-count",
+  auth.validateAccessToken,
+  userController.getSentMessagesCount,
+);
+
+usersRouter.get(
   "/refresh",
   auth.validateRefreshToken,
   userController.refreshAccessToken,
