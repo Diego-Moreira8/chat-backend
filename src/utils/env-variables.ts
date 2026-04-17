@@ -11,6 +11,7 @@ function getEnv(key: string) {
 }
 
 export const envVar = {
+  CORS_ORIGINS: getEnv("CORS_ORIGINS"),
   DATABASE_URL: getEnv("DATABASE_URL"),
   JWT_SECRET: getEnv("JWT_SECRET"),
   NODE_ENV: getEnv("NODE_ENV"),

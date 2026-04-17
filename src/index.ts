@@ -13,7 +13,7 @@ app.use(helmet());
 app.use(logger("dev"));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: envVar.CORS_ORIGINS,
     credentials: true,
   }),
 );
