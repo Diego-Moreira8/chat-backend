@@ -1,6 +1,12 @@
 import { prisma } from "../lib/prisma.js";
 import { encryptPassword } from "../utils/bcrypt.js";
 
+interface UpdateUserInput {
+  name: string | null;
+  username: string;
+  password?: string;
+}
+
 async function createUser(username: string, password: string, name: string) {
   const encryptedPassword = await encryptPassword(password);
 
@@ -25,6 +31,23 @@ async function getSentMessagesCount(userId: number) {
   return count;
 }
 
+async function updateUser(userId: number, input: UpdateUserInput) {
+  if (input.password) {
+    input.password = await encryptPassword(input.password);
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      name: input.name || null,
+      ...(input.username && { username: input.username }),
+      ...(input.password && { password: input.password }),
+    },
+  });
+
+  return updatedUser;
+}
+
 async function usernameExists(username: string) {
   const user = await prisma.user.findFirst({
     where: {
@@ -38,4 +61,10 @@ async function usernameExists(username: string) {
   return user;
 }
 
-export { createUser, getSentMessagesCount, getUserById, usernameExists };
+export {
+  createUser,
+  getSentMessagesCount,
+  getUserById,
+  updateUser,
+  usernameExists,
+};

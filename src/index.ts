@@ -24,6 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", usersRouter);
 app.use("/messages", messagesRouter);
 
+// TODO: Error handlers
+
 app.listen(envVar.PORT, () => {
   if (envVar.NODE_ENV === "development") {
     console.log(`Listening on http://localhost:${envVar.PORT}/`);

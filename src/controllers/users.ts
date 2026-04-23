@@ -89,6 +89,29 @@ async function refreshAccessToken(
   });
 }
 
+async function updateCurrentUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const isChangingPassword = req.body.changePassword;
+
+  const updatedUser = await userService.updateUser(res.locals.user.id, {
+    name: req.body.name,
+    username: req.body.username,
+    ...(isChangingPassword && { password: req.body.newPassword }),
+  });
+
+  res.json({
+    user: {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      name: updatedUser.name,
+      role: updatedUser.role,
+    },
+  });
+}
+
 export {
   createUser,
   getCurrentUser,
@@ -97,4 +120,5 @@ export {
   login,
   logout,
   refreshAccessToken,
+  updateCurrentUser,
 };

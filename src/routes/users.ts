@@ -6,6 +6,7 @@ import { createUserValidator } from "../middlewares/validators/createUserValidat
 import { loginValidator } from "../middlewares/validators/loginValidator.js";
 import { userIdValidator } from "../middlewares/validators/userIdValidator.js";
 import { validateRequest } from "../middlewares/validators/validateRequest.js";
+import { updateUserValidator } from "../middlewares/validators/updateUserValidator.js";
 
 const usersRouter = Router();
 
@@ -26,6 +27,14 @@ usersRouter.post(
 usersRouter.get("/logout", userController.logout);
 
 usersRouter.get("/me", auth.validateAccessToken, userController.getCurrentUser);
+
+usersRouter.patch(
+  "/me",
+  auth.validateAccessToken,
+  updateUserValidator,
+  validateRequest,
+  userController.updateCurrentUser,
+);
 
 usersRouter.get(
   "/messages-count",
